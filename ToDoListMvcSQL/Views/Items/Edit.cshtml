@@ -1,0 +1,30 @@
+@{
+  Layout = "_Layout";
+}
+
+@model ToDoListMvcSqlEntityIdentity.Models.Item
+
+<h2>Edit</h2>
+
+<h4>Edit this task: @Html.DisplayFor(model => model.Description)</h4>
+
+@using (Html.BeginForm())
+{
+  @Html.HiddenFor(model => model.ItemId)
+
+  @Html.LabelFor(model => model.Description)
+  @Html.EditorFor(model => model.Description)
+
+  @Html.LabelFor(model => model.DueDate)
+  @Html.TextBoxFor(model => model.DueDate, new { @type = "datetime-local"})
+
+  @Html.Label("Select category")
+  @Html.DropDownList("CategoryId")
+
+  @Html.LabelFor(model => model.IsComplete)
+  @Html.CheckBox("IsComplete", Model.IsComplete)
+
+  <input type="submit" value="Save" />
+}
+<p>@Html.ActionLink("Back to list", "Index")</p>
+<p>@Html.ActionLink("Home", "Index", "Home")</p>
