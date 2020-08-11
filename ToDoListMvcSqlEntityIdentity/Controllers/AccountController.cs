@@ -8,7 +8,7 @@ namespace ToDoListMvcSqlEntityIdentity.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ToDoListContext _db;
+        private readonly ToDoListMvcSqlEntityIdentityContext _db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
