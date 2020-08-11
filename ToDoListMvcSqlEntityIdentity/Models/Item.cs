@@ -12,6 +12,7 @@ namespace ToDoListMvcSqlEntityIdentity.Models
     }
     public int ItemId { get; set; }
     public string Description { get; set; }
+    public virtual ApplicationUser User { get; set; }
     public bool IsComplete { get; set; }
     public DateTime DueDate { get; set; }
     public ICollection<CategoryItem> Categories { get; }

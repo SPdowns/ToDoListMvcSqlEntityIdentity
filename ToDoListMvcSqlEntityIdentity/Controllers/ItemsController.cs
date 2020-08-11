@@ -3,23 +3,33 @@ using Microsoft.EntityFrameworkCore;
 using ToDoListMvcSqlEntityIdentity.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace ToDoListMvcSqlEntityIdentity.Controllers
 {
+  [Authorize]
   public class ItemsController : Controller
   {
-    private readonly ToDoListMvcSqlEntityIdentityContext _db;
+    private readonly ToDoListMvcSqlEntityIdentityContext _db;   
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ItemsController(ToDoListMvcSqlEntityIdentityContext db)
+    public ItemsController(UserManager<ApplicationUser> userManager, ToDoListMvcSqlEntityIdentityContext db)
     {
+      _userManager = userManager;
       _db = db;
     }
 
-    public ActionResult Index()
+    public async Task<ActionResult> Index()
     {
-      return View(_db.Items.OrderBy(item => item.DueDate).ToList());
+    var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var currentUser = await _userManager.FindByIdAsync(userId);
+    var userItems = _db.Items.Where(entry => entry.User.Id == currentUser.Id).ToList();
+    return View(userItems);
     }
     public ActionResult Create()
     {
@@ -28,12 +38,15 @@ namespace ToDoListMvcSqlEntityIdentity.Controllers
     }
     
     [HttpPost]
-    public ActionResult Create(Item item, int CategoryId)
+    public async Task<ActionResult> Create(Item item, int CategoryId)
     {
+      var userId = this.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var currentUser = await _userManager.FindByIdAsync(userId);
+      item.User = currentUser;
       _db.Items.Add(item);
       if (CategoryId != 0)
       {
-        _db.CategoryItem.Add(new CategoryItem() { CategoryId = CategoryId, ItemId = item.ItemId });
+          _db.CategoryItem.Add(new CategoryItem() { CategoryId = CategoryId, ItemId = item.ItemId });
       }
       _db.SaveChanges();
       return RedirectToAction("Index");

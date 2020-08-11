@@ -4,14 +4,12 @@
 
 @model ToDoListMvcSqlEntityIdentity.Models.Item
 
-<h3>Add a new task</h3>
+<h4>Add a new task</h4>
+
 @using (Html.BeginForm())
 {
     @Html.LabelFor(model => model.Description)
     @Html.TextBoxFor(model => model.Description)
-
-    @Html.LabelFor(model => model.DueDate)
-    @Html.TextBoxFor(model => model.DueDate, new { @type = "datetime-local"})
 
     @Html.Label("Select category")
     @Html.DropDownList("CategoryId")
